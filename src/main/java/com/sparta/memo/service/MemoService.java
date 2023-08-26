@@ -4,10 +4,13 @@ import com.sparta.memo.dto.MemoRequestDto;
 import com.sparta.memo.dto.MemoResponseDto;
 import com.sparta.memo.entity.Memo;
 import com.sparta.memo.repository.MemoRepository;
+import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class MemoService {
 
     private final MemoRepository memoRepository;
@@ -16,6 +19,18 @@ public class MemoService {
     {
         this.memoRepository = memoRepository;
     }
+
+    // Manual Injection not using auto wired
+//    public MemoService(ApplicationContext context) {
+//        // Using name from bean
+//        // MemoRepository memoRepository = (MemoRepository) context.getBean("");
+//
+//        // Using bean in class format
+//        // MemoRepository memoRepository = context.getBean(MemoRepository.class);
+//
+//        this.memoRepository = memoRepository;
+//    }
+
 
     public MemoResponseDto createMemo(MemoRequestDto requestDto) {
         // RequestDto -> Entity
