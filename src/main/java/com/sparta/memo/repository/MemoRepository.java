@@ -56,7 +56,8 @@ public class MemoRepository {
         });
     }
 
-    public Long update(Long id,Memo memo, MemoRequestDto requestDto) {
+    public Long update(Long id, MemoRequestDto requestDto) {
+        Memo memo = findById(id);
         if(memo != null) {
             // memo 내용 수정
             String sql = "UPDATE memo SET username = ?, contents = ? WHERE id = ?";
@@ -68,7 +69,8 @@ public class MemoRepository {
         }
     }
 
-    public Long delete(Long id, Memo memo) {
+    public Long delete(Long id) {
+        Memo memo = findById(id);
         if(memo != null) {
             // memo 삭제
             String sql = "DELETE FROM memo WHERE id = ?";
@@ -78,5 +80,21 @@ public class MemoRepository {
         } else {
             throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
         }
+    }
+
+    private Memo findById(Long id) {
+        // DB 조회
+        String sql = "SELECT * FROM memo WHERE id = ?";
+
+        return jdbcTemplate.query(sql, resultSet -> {
+            if (resultSet.next()) {
+                Memo memo = new Memo();
+                memo.setUsername(resultSet.getString("username"));
+                memo.setContents(resultSet.getString("contents"));
+                return memo;
+            } else {
+                return null;
+            }
+        }, id);
     }
 }

@@ -17,54 +17,35 @@ import java.util.List;
 
 public class MemoService {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final MemoRepository memoRepository;
 
-    public MemoService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public MemoService(JdbcTemplate jdbcTemplate)
+    {
+        this.memoRepository = new MemoRepository(jdbcTemplate);
     }
+
     public MemoResponseDto createMemo(MemoRequestDto requestDto) {
         // RequestDto -> Entity
         Memo memo = new Memo(requestDto);
         // DB 저장
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
-        Memo savedMemo = memoRepository.save(memo);
+        Memo savedMemo = this.memoRepository.save(memo);
         // Entity -> ResponseDto
-        MemoResponseDto memoResponseDto = new MemoResponseDto(memo);
-        return memoResponseDto;
+        return new MemoResponseDto(memo);
     }
 
     public List<MemoResponseDto> getMemos() {
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
-        return memoRepository.findAll();
+        return this.memoRepository.findAll();
     }
 
     public Long updateMemo(Long id, MemoRequestDto requestDto) {
         // 해당 메모가 DB에 존재하는지 확인
-        Memo memo = findById(id);
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
-        return memoRepository.update(id ,memo, requestDto);
+        return this.memoRepository.update(id, requestDto);
     }
 
     public Long deleteMemo(Long id) {
         // 해당 메모가 DB에 존재하는지 확인
-        Memo memo = findById(id);
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
-        return memoRepository.delete(id, memo);
+        return this.memoRepository.delete(id);
     }
 
-    private Memo findById(Long id) {
-        // DB 조회
-        String sql = "SELECT * FROM memo WHERE id = ?";
 
-        return jdbcTemplate.query(sql, resultSet -> {
-            if(resultSet.next()) {
-                Memo memo = new Memo();
-                memo.setUsername(resultSet.getString("username"));
-                memo.setContents(resultSet.getString("contents"));
-                return memo;
-            } else {
-                return null;
-            }
-        }, id);
-    }
 }
