@@ -7,10 +7,11 @@ import com.sparta.memo.repository.MemoRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 public class MemoService {
 
     private final MemoRepository memoRepository;
